@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Football field background for the entire app */
+body {
+  background-image: url('https://images.pexels.com/photos/399187/pexels-photo-399187.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Add overlay to ensure readability */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Dark mode overlay */
+.dark body::before {
+  background: rgba(0, 0, 0, 0.75);
+}
