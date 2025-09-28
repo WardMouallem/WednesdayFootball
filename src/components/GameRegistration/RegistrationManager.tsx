@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { gameService } from '../../services/gameService';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabase';
 import SuccessBanner from './SuccessBanner';
 import PlayerList from './PlayerList';
 
