@@ -2,7 +2,7 @@ import React from 'react';
 
 // Temporary fix for JS component in TS environment
 const RegistrationManager = React.lazy(() => 
-  import('../GameRegistration/RegistrationManager' as any)
+  import('../GameRegistration/RegistrationManager')
 );
 
 const NextGameList: React.FC = () => {
