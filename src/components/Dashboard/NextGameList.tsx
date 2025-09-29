@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NextGameList: React.FC = () => {
+export const NextGameList: React.FC = () => {
   return (
     <div className="next-game-list">
       {/* Header Section - Keep your existing style */}
@@ -34,5 +34,3 @@ const NextGameList: React.FC = () => {
     </div>
   );
 };
-
-export default NextGameList;
