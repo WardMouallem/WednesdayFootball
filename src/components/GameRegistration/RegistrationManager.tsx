@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { gameService } from '../../services/gameService';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import SuccessBanner from './SuccessBanner';
 import PlayerList from './PlayerList';
 
-const RegistrationManager = () => {
-  const [currentGame, setCurrentGame] = useState(null);
-  const [user, setUser] = useState(null);
+const RegistrationManager: React.FC = () => {
+  const { currentUser, appData, updateAppData } = useAuth();
+  const [currentGame, setCurrentGame] = useState<any>(null);
   const [banner, setBanner] = useState({ visible: false, type: '', playerName: '' });
   const [loading, setLoading] = useState(false);
 
-  // Load user and game data
+  // Load game data
   useEffect(() => {
-    loadUser();
     loadGameData();
     setupRealtimeSubscription();
   }, []);
-
-  const loadUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
-  };
 
   const loadGameData = async () => {
     try {
@@ -32,21 +26,30 @@ const RegistrationManager = () => {
   };
 
   const setupRealtimeSubscription = () => {
-    gameService.subscribeToRegistrations((payload) => {
+    gameService.subscribeToRegistrations((payload: any) => {
       loadGameData(); // Reload when registrations change
     });
   };
 
-  const showBanner = (type, playerName = '') => {
+  const showBanner = (type: string, playerName: string = '') => {
     setBanner({ visible: true, type, playerName });
     setTimeout(() => setBanner({ ...banner, visible: false }), 5000);
   };
 
-  const registerPlayer = async (playerData, isSelfRegistered = false) => {
+  const registerPlayer = async (playerData: any, isSelfRegistered: boolean = false) => {
+    if (!currentUser) {
+      alert('Please log in to register players');
+      return;
+    }
+
     setLoading(true);
     try {
       const registration = await gameService.registerPlayer(
-        { ...playerData, registeredBy: user.id },
+        { 
+          ...playerData, 
+          registeredBy: currentUser.id,
+          userId: isSelfRegistered ? currentUser.id : null
+        },
         isSelfRegistered
       );
 
@@ -67,37 +70,37 @@ const RegistrationManager = () => {
   };
 
   const handleSelfRegister = async () => {
-    if (!user) {
+    if (!currentUser) {
       alert('Please log in to register yourself');
       return;
     }
 
-    // Get user's player name (you might need to adjust this based on your user structure)
-    const playerName = user.user_metadata?.playerName || user.email?.split('@')[0] || 'Player';
+    // Use the player name from the user's profile
+    const playerName = currentUser.playerName || currentUser.username || 'Player';
     
     await registerPlayer({
       name: playerName,
-      phoneNumber: user.phone || '0000000000',
-      userId: user.id
+      phoneNumber: currentUser.phoneNumber || '0000000000',
+      userId: currentUser.id
     }, true);
   };
 
-  const handleRegisterOther = async (e) => {
+  const handleRegisterOther = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.target as HTMLFormElement);
     const playerData = {
-      name: formData.get('playerName'),
-      phoneNumber: formData.get('phoneNumber')
+      name: formData.get('playerName') as string,
+      phoneNumber: formData.get('phoneNumber') as string
     };
 
     await registerPlayer(playerData, false);
-    e.target.reset();
+    (e.target as HTMLFormElement).reset();
   };
 
-  if (!user) {
+  if (!currentUser) {
     return (
       <div className="p-4 text-center">
-        <p>Please log in to manage registrations</p>
+        <p className="text-lg font-semibold">Please log in to manage registrations</p>
       </div>
     );
   }
@@ -122,7 +125,7 @@ const RegistrationManager = () => {
             disabled={loading}
             className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50"
           >
-            {loading ? 'Registering...' : 'Register Me for Game ⚽'}
+            {loading ? 'Registering...' : `Register ${currentUser.playerName || currentUser.username} ⚽`}
           </button>
         </div>
 
@@ -135,14 +138,14 @@ const RegistrationManager = () => {
               name="playerName"
               placeholder="Player Name"
               required
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
             />
             <input
               type="tel"
               name="phoneNumber"
               placeholder="Phone Number"
               required
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
             />
             <button
               type="submit"
