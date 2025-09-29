@@ -6,7 +6,7 @@ import { Header } from './Header';
 import { SideNavigation } from './SideNavigation';
 import { Homepage } from './Homepage';
 import { Profile } from './Profile';
-import NextGameList from './NextGameList';
+import { NextGameList } from './NextGameList';
 import { Stats } from './Stats';
 import { HouseRules } from './HouseRules';
 import { Location } from './Location';
