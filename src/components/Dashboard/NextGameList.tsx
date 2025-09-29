@@ -1,6 +1,7 @@
 import React from 'react';
 
-// Temporary fix for JS import { Calendar, Plus, X, Users, Trash2, AlertCircle, UserPlus, Zap, Clock, Lock, UserCheck, UserX, CreditCard as Edit3, Save, Key, Shuffle, FileText, Copy, User } from 'lucide-react'return (
+const NextGameList: React.FC = () => {
+  return (
     <div className="next-game-list">
       {/* Header Section - Keep your existing style */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -14,7 +15,10 @@ import React from 'react';
 
       {/* Registration Manager with Error Boundary */}
       <React.Suspense fallback={<div>Loading registration system...</div>}>
-        <RegistrationManager />
+        {/* RegistrationManager component would go here */}
+        <div className="bg-gray-100 p-4 rounded-lg">
+          <p className="text-gray-600">Registration system loading...</p>
+        </div>
       </React.Suspense>
 
       {/* Additional Info Section */}
